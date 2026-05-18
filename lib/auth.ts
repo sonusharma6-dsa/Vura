@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { loginSchema } from "@/lib/validations";
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma) as any,
@@ -19,12 +20,13 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) {
-                    throw new Error("Invalid credentials");
+                const parsed = loginSchema.safeParse(credentials);
+                if (!parsed.success) {
+                    throw new Error(parsed.error.errors[0].message);
                 }
 
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials.email }
+                    where: { email: parsed.data.email }
                 });
 
                 // User doesn't exist or registered with Google (no password)
@@ -32,7 +34,7 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("User not found or uses OAuth");
                 }
 
-                const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+                const isPasswordValid = await bcrypt.compare(parsed.data.password, user.password);
 
                 if (!isPasswordValid) {
                     throw new Error("Invalid Credentials");

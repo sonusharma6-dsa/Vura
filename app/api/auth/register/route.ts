@@ -1,16 +1,21 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { registerSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
     try {
-        const { email, password, name } = await req.json();
+        const body = await req.json();
+        const parsed = registerSchema.safeParse(body);
 
-        if (!email || !password) {
-            return NextResponse.json({ message: "Email and password are required" }, { status: 400 });
+        if (!parsed.success) {
+            const error = parsed.error.errors[0].message;
+            return NextResponse.json({ error }, { status: 400 });
         }
+
+        const { email, password, name } = parsed.data;
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
