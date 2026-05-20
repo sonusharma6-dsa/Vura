@@ -2,14 +2,19 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { forgotPasswordSchema } from "@/lib/validations";
 
 export async function POST(req: Request) {
     try {
-        const { email } = await req.json();
+        const body = await req.json();
+        const parsed = forgotPasswordSchema.safeParse(body);
 
-        if (!email) {
-            return NextResponse.json({ message: "Email is required" }, { status: 400 });
+        if (!parsed.success) {
+            const error = parsed.error.issues[0].message;
+            return NextResponse.json({ error }, { status: 400 });
         }
+
+        const { email } = parsed.data;
 
         const user = await prisma.user.findUnique({
             where: { email },

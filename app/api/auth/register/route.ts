@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { ZodError } from "zod";
 import { validateRegister } from "@/lib/validation/auth";
+import { registerSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,14 @@ export async function POST(req: Request) {
                 return NextResponse.json({ message: "Invalid input", errors: err.errors }, { status: 400 });
             }
             throw err;
+        const parsed = registerSchema.safeParse(body);
+
+        if (!parsed.success) {
+            const error = parsed.error.issues[0].message;
+            return NextResponse.json({ error }, { status: 400 });
         }
+
+        const { email, password, name } = parsed.data;
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({

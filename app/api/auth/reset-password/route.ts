@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { ZodError } from "zod";
 import { validateResetPassword } from "@/lib/validation/auth";
+import { resetPasswordSchema } from "@/lib/validations";
 
 export async function POST(req: Request) {
     try {
@@ -18,7 +19,14 @@ export async function POST(req: Request) {
                 return NextResponse.json({ message: "Invalid input", errors: err.errors }, { status: 400 });
             }
             throw err;
+        const parsed = resetPasswordSchema.safeParse(body);
+
+        if (!parsed.success) {
+            const error = parsed.error.issues[0].message;
+            return NextResponse.json({ error }, { status: 400 });
         }
+
+        const { token, password } = parsed.data;
 
         const user = await prisma.user.findFirst({
             where: {
