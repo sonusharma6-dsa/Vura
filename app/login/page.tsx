@@ -51,7 +51,8 @@ function LoginContent() {
         });
 
         if (!res?.ok || res.error) {
-            setError(AUTH_ERROR_MESSAGES[res.error] || "Invalid email or password");
+            const errorKey = res?.error ?? "";
+            setError(AUTH_ERROR_MESSAGES[errorKey] || "Invalid email or password");
             setLoading(false);
             return;
         } else {
