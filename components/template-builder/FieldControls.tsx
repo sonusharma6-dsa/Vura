@@ -26,15 +26,15 @@ export default function FieldControls({ field, onChange }: FieldControlsProps) {
   }
 
   const handleXChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...field, x: parseInt(e.target.value) || 0 })
+    const parsed = parseInt(e.target.value)
+    const clamped = Math.max(0, Math.min(794, Number.isNaN(parsed) ? 0 : parsed))
+    onChange({ ...field, x: clamped })
   }
 
   const handleYChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ ...field, y: parseInt(e.target.value) || 0 })
-  }
-
-  const handleAlignChange = (align: 'left' | 'center' | 'right') => {
-    onChange({ ...field, align })
+    const parsed = parseInt(e.target.value)
+    const clamped = Math.max(0, Math.min(562, Number.isNaN(parsed) ? 0 : parsed))
+    onChange({ ...field, y: clamped })
   }
 
   return (
@@ -64,25 +64,6 @@ export default function FieldControls({ field, onChange }: FieldControlsProps) {
             className="w-8 h-8 rounded cursor-pointer border-0 bg-transparent"
           />
           <span className="text-xs text-[var(--color-neon-muted)] font-mono">{field.color}</span>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-xs text-[var(--color-neon-muted)] mb-1.5">Alignment</label>
-        <div className="flex gap-1.5">
-          {(['left', 'center', 'right'] as const).map((align) => (
-            <button
-              key={align}
-              onClick={() => handleAlignChange(align)}
-              className={`flex-1 py-1.5 rounded text-xs font-medium capitalize transition-all ${
-                field.align === align
-                  ? 'bg-[var(--color-neon-primary)]/20 border border-[var(--color-neon-primary)]/40 text-[var(--color-neon-primary)]'
-                  : 'bg-white/5 border border-white/10 text-[var(--color-neon-muted)] hover:bg-white/10'
-              }`}
-            >
-              {align}
-            </button>
-          ))}
         </div>
       </div>
 

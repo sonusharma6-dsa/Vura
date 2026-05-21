@@ -19,7 +19,7 @@ const DEFAULT_FIELDS: TemplateField[] = [
     align: 'center',
   },
   {
-    id: 'eventTitle',
+    id: 'course',
     label: 'Event Title',
     x: 300,
     y: 180,
@@ -28,7 +28,7 @@ const DEFAULT_FIELDS: TemplateField[] = [
     align: 'center',
   },
   {
-    id: 'date',
+    id: 'issueDate',
     label: 'Date',
     x: 300,
     y: 310,

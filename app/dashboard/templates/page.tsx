@@ -39,7 +39,7 @@ export default async function TemplatesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((event) => (
-            <TemplateCard key={event.id} event={event} />
+            <TemplateCard key={event.id} event={event as any} />
           ))}
         </div>
       )}

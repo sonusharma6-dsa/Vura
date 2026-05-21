@@ -96,7 +96,7 @@ export default function TemplateCard({ event }: TemplateCardProps) {
         {event.template && (
           <div className="bg-white/5 rounded-lg p-3">
             <p className="text-[var(--color-neon-muted)] text-xs font-medium mb-2">
-              {event.template.fields.length} fields configured
+              {Array.isArray(event.template.fields) ? event.template.fields.length : 0} fields configured
             </p>
             {Array.isArray(event.template.fields) && event.template.fields.length > 0 && (
               <div className="space-y-1">
