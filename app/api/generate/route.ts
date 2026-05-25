@@ -25,6 +25,9 @@ type GeneratedCertificate = {
     sentAt: string | null;
 };
 
+type FieldSetting = { enabled?: boolean; x?: number; y?: number; fontSize?: number };
+type Settings = { name?: FieldSetting; course?: FieldSetting; issueDate?: FieldSetting; [key: string]: FieldSetting | undefined };
+
 function getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
 }
@@ -49,7 +52,7 @@ export async function POST(req: NextRequest) {
 
         // Extract settings payload before parsing to know which columns are required
         const settingsString = formData.get("settings") as string | null;
-        let settings: Record<string, any> | null = null;
+        let settings: Settings | null = null;
         if (settingsString) {
             try {
                 settings = JSON.parse(settingsString);
@@ -87,21 +90,15 @@ export async function POST(req: NextRequest) {
         const normalizeKey = (key: string) => key.trim().toLowerCase();
 
         // 3. Find the valid sheet
-        let rows: any[] = [];
-        let firstRow: any = null;
+        let rows: Record<string, unknown>[] = [];
 
         for (const sheetName of workbook.SheetNames) {
             const sheet = workbook.Sheets[sheetName];
-            const sheetRows = xlsx.utils.sheet_to_json<any>(sheet);
+            const sheetRows = xlsx.utils.sheet_to_json<Record<string, unknown>>(sheet);
             if (sheetRows.length > 0) {
-                const potentialFirstRow = sheetRows[0];
-                const normalizedKeys = Object.keys(potentialFirstRow).map(normalizeKey);
-
-                const hasAllRequiredCols = requiredCols.every(col => normalizedKeys.includes(col));
-
-                if (hasAllRequiredCols) {
+                const normalizedKeys = Object.keys(sheetRows[0]).map(normalizeKey);
+                if (requiredCols.every(col => normalizedKeys.includes(col))) {
                     rows = sheetRows;
-                    firstRow = potentialFirstRow;
                     break;
                 }
             }
@@ -278,8 +275,8 @@ export async function POST(req: NextRequest) {
             batchId,
             certificates: generatedRecords
         }, { status: 200 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("Certificate Generation Error:", error);
-        return NextResponse.json({ error: "Generation failed: " + (error?.message || String(error)) }, { status: 500 });
+        return NextResponse.json({ error: "Generation failed: " + getErrorMessage(error) }, { status: 500 });
     }
 }
