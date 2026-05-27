@@ -54,14 +54,32 @@ export async function POST(req: NextRequest) {
         const settingsString = formData.get("settings") as string | null;
         let settings: Settings | null = null;
         if (settingsString) {
+            let parsed: unknown;
             try {
-                settings = JSON.parse(settingsString);
+                parsed = JSON.parse(settingsString);
             } catch {
                 return NextResponse.json(
                     { error: "Invalid settings JSON. Please provide valid JSON in the settings field." },
                     { status: 400 }
                 );
             }
+            if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+                return NextResponse.json(
+                    { error: "Invalid settings: must be a JSON object." },
+                    { status: 400 }
+                );
+            }
+            const s = parsed as Record<string, unknown>;
+            const fieldKeys = ["name", "course", "issueDate", "qrCode"] as const;
+            for (const key of fieldKeys) {
+                if (key in s && (typeof s[key] !== "object" || s[key] === null || Array.isArray(s[key]))) {
+                    return NextResponse.json(
+                        { error: `Invalid settings: "${key}" must be an object.` },
+                        { status: 400 }
+                    );
+                }
+            }
+            settings = parsed as Settings;
         }
         const saveToDb = formData.get("saveToDb") !== "false";
         const batchId = generateBatchId();
