@@ -222,7 +222,7 @@ export default function Dashboard() {
             <div className="w-full max-w-6xl glass-card relative z-10">
                 <h1 className="text-3xl font-bold mb-2 text-center">Certificate Generator</h1>
                 <p className="text-[var(--color-neon-muted)] mb-8 text-center max-w-2xl mx-auto">
-                    Upload your base PDF template and an Excel mapping file to create and deploy verifiable certificates in bulk.
+                    Upload your base PDF template and an Excel or CSV mapping file to create and deploy verifiable certificates in bulk.
                 </p>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -256,6 +256,7 @@ export default function Dashboard() {
                                 <div className="relative group border-2 border-dashed border-[var(--color-neon-border)] rounded-xl p-6 text-center transition-colors hover:border-[var(--color-neon-secondary)] cursor-pointer h-32 flex items-center justify-center">
                                     <input
                                         type="file"
+                                        accept=".xlsx, .xls, .csv"
                                         accept=".xlsx,.xls,.csv"
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         onChange={(e) => setExcelFile(e.target.files?.[0] || null)}
@@ -263,6 +264,7 @@ export default function Dashboard() {
                                     <div className="flex flex-col items-center pointer-events-none">
                                         <FileSpreadsheet className="w-6 h-6 mb-2 text-[var(--color-neon-secondary)]" />
                                         <span className="text-xs">
+                                            {excelFile ? <span className="text-[var(--color-neon-secondary)] truncate max-w-[120px] block">{excelFile.name}</span> : "Browse Excel/CSV"}
                                             {excelFile ? <span className="text-[var(--color-neon-secondary)] truncate max-w-[120px] block">{excelFile.name}</span> : "Browse Excel / CSV"}
                                         </span>
                                     </div>
