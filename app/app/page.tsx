@@ -256,14 +256,14 @@ export default function Dashboard() {
                                 <div className="relative group border-2 border-dashed border-[var(--color-neon-border)] rounded-xl p-6 text-center transition-colors hover:border-[var(--color-neon-secondary)] cursor-pointer h-32 flex items-center justify-center">
                                     <input
                                         type="file"
-                                        accept=".xlsx, .xls"
+                                        accept=".xlsx,.xls,.csv"
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         onChange={(e) => setExcelFile(e.target.files?.[0] || null)}
                                     />
                                     <div className="flex flex-col items-center pointer-events-none">
                                         <FileSpreadsheet className="w-6 h-6 mb-2 text-[var(--color-neon-secondary)]" />
                                         <span className="text-xs">
-                                            {excelFile ? <span className="text-[var(--color-neon-secondary)] truncate max-w-[120px] block">{excelFile.name}</span> : "Browse Excel"}
+                                            {excelFile ? <span className="text-[var(--color-neon-secondary)] truncate max-w-[120px] block">{excelFile.name}</span> : "Browse Excel / CSV"}
                                         </span>
                                     </div>
                                 </div>
