@@ -58,13 +58,16 @@ export default function RegisterPage() {
             });
 
             const data = await res.json();
+            const errorMessage = data.message || data.error || "Something went wrong. Please try again.";
 
             if (!res.ok) {
-                throw new Error(data.message || "Something went wrong. Please try again.");
+                console.error("Registration failed:", { status: res.status, data });
+                throw new Error(errorMessage);
             }
 
             router.push("/login?registered=true");
         } catch (err: any) {
+            console.error("Registration request failed:", err);
             setError(err.message);
         } finally {
             setLoading(false);
