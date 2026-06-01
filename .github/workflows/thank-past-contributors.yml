@@ -9,6 +9,7 @@ permissions:
 jobs:
   thank-past-contributors:
     runs-on: ubuntu-latest
+
     steps:
       - name: Thank all past contributors
         uses: actions/github-script@v7
