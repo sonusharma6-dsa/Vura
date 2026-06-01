@@ -33,12 +33,15 @@ jobs:
 
             console.log(`Found ${mergedPRs.length} merged PRs to thank contributors for`);
 
-            const commentBody = `Thank you so much for contributing to Vura! 🙏 Your efforts are greatly appreciated and help make this project better.
-
-If you'd like to download your contribution certificate and view your profile, please visit:
-https://vurakit.vercel.app/contributor
-
-We're grateful for your support!`;
+            const commentLines = [
+              "Thank you so much for contributing to Vura! 🙏 Your efforts are greatly appreciated and help make this project better.",
+              "",
+              "If you'd like to download your contribution certificate and view your profile, please visit:",
+              "https://vurakit.vercel.app/contributor",
+              "",
+              "We're grateful for your support!"
+            ];
+            const commentBody = commentLines.join("\n");
 
             for (const pr of mergedPRs) {
               // Check for an existing thank-you comment to avoid duplicates
