@@ -1,7 +1,7 @@
 name: Thank Past Contributors
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   thank-past-contributors:
@@ -15,7 +15,6 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Fetch all merged PRs
             const prs = await github.paginate(github.rest.pulls.list, {
               owner: owner,
               repo: repo,
@@ -25,7 +24,6 @@ jobs:
               per_page: 100
             });
             
-            // Filter for merged PRs not by omn7
             const mergedPRs = prs.filter(pr => pr.merged_at && pr.user.login !== 'omn7');
             
             console.log(`Found ${mergedPRs.length} merged PRs to thank contributors for`);
@@ -38,7 +36,6 @@ https://vurakit.vercel.app/contributor
 We're grateful for your support!`;
             
             for (const pr of mergedPRs) {
-              // Check if comment already exists to avoid duplicates
               const comments = await github.rest.issues.listComments({
                 owner: owner,
                 repo: repo,
